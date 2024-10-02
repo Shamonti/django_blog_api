@@ -1,6 +1,8 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 
 # Create your views here.
+from rest_framework_simplejwt.authentication import JWTAuthentication 
+from rest_framework.permissions import IsAuthenticated, AllowAny 
 # from rest_framework.views import APIView
 from rest_framework import viewsets, generics
 # from rest_framework.response import Response
@@ -16,6 +18,12 @@ from .serializers import PostSerializer, CommentSerializer
 class PostViewSet(viewsets.ModelViewSet):
   queryset = Post.objects.all()
   serializer_class = PostSerializer
+  authentication_classes = [JWTAuthentication]
+
+  def get_permissions(self):
+      if self.action in ['create', 'update', 'destroy']:
+          return [IsAuthenticated()]
+      return[AllowAny()]
 
 # class CommentViewSet(viewsets.ModelViewSet):
 #   queryset = Comment.objects.all()
